@@ -1,1 +1,1 @@
-console.log("Love from this side");
+console.log("Salam from this side");
