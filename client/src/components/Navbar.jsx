@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Logo from "../img/logo.png";
+import Logo from "../img/talesLogo.png";
 
 const Navbar = () => {
   return (
@@ -25,7 +25,7 @@ const Navbar = () => {
           <Link className="link" to="/?cat=food">
             <h6>FOOD</h6>
           </Link>
-          <span>John</span>
+          <span>Mehedi</span>
           <span>Logout</span>
           <span className="write">
             <Link className="link" to="/write">
