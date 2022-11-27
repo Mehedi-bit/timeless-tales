@@ -187,14 +187,16 @@ $lightGreen: #b9e7e7;
             button {
               width: max-content;
               padding: 10px 20px;
-              color: teal;
-              border: 1px solid teal;
+              border: none;
+              cursor: pointer;
               background-color: white;
+              border: 1px solid teal;
+              color: teal;
 
               &:hover {
-                background-color: teal;
+                border: 1px solid white;
+                background-color: $lightGreen;
                 color: black;
-                cursor: pointer;
               }
             }
           }
