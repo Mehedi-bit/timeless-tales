@@ -23,7 +23,6 @@ export const register = (req, res) => {
                 req.body.email,
                 hash,
             ];
-            console.log(values);
             
             db.query(q, [values], (err, data) => {
                 if (err) return res.json(err);
