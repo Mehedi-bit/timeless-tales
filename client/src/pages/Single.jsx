@@ -1,84 +1,65 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Edit from "../img/edit.png";
 import Delete from "../img/delete.png";
 import Menu from "../components/Menu";
+import axios from "axios";
+import moment from "moment";
+import { useContext } from "react";
+import { AuthContext } from "../context/authContext.js";
 
 const Single = () => {
+  const [post, setPost] = useState({});
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const postId = location.pathname.split("/").at(-1);
+
+  const { currentUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`/posts/${postId}`);
+        console.log(res.data);
+        setPost(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [postId]);
+
+  const handleDelete = async (req, res) => {
+    try {
+      await axios.delete(`/posts/${postId}`);
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="single">
       <div className="content">
-        <img
-          src="https://images.pexels.com/photos/12766490/pexels-photo-12766490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-          alt=""
-        />
+        <img src={post?.image} alt="" />
         <div className="user">
-          <img
-            src="https://images.pexels.com/photos/1172207/pexels-photo-1172207.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-            alt=""
-          />
+          {post.userImg && <img src={post.userImg} alt="" />}
           <div className="info">
-            <span>Mehedi</span>
-            <p>Posted 2 days ago</p>
+            <span>{post?.username}</span>
+            <p>Posted {moment(post.date).fromNow()}</p>
           </div>
-          <div className="edit">
-            <Link to={`/write?edit=2`}>
-              <img src={Edit} alt="" />
-            </Link>
-            <img src={Delete} alt="" />
-          </div>
+          {currentUser.username === post.user && (
+            <div className="edit">
+              <Link to={`/write?edit=2`}>
+                <img src={Edit} alt="" />
+              </Link>
+              <img onClick={handleDelete} src={Delete} alt="" />
+            </div>
+          )}
         </div>
-        <h1>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia magni in
-          incidunt, fugiat cumque aliquid!
-        </h1>
-        <p>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam ipsam
-          explicabo accusantium, quae atque commodi sed voluptatibus praesentium
-          omnis aperiam saepe labore ex. Sapiente quos libero alias,
-          <br />
-          <br />
-          totam suscipit obcaecati eligendi voluptatibus consectetur adipisci
-          eaque cum sed distinctio beatae minima molestiae accusamus facere
-          quis. Harum quo quod doloribus iusto consequatur quidem distinctio sed
-          optio nostrum!
-          <br />
-          <br />
-          Quaerat harum consequatur odit. Praesentium facilis est maxime saepe
-          amet eum officiis harum explicabo illum ipsum esse odio optio modi
-          eveniet consequatur pariatur, nostrum deleniti sed, aliquam reiciendis
-          ex perspiciatis? Temporibus aliquid illo fugiat dicta? Nisi facilis
-          sequi expedita voluptates repudiandae nostrum corrupti eos
-          consequuntur ipsum! Cumque officia aperiam at officiis cum minus
-          beatae dolor voluptates ipsa facere nisi perferendis consequuntur
-          voluptatibus vitae perspiciatis,
-          <br />
-          <br />
-          rem quasi adipisci, cupiditate voluptatem incidunt consectetur
-          voluptas nesciunt et similique. Rerum cumque nesciunt veniam odio ut,
-          quae iure possimus neque dolor, quos minima! Ipsa perferendis,
-          quaerat, natus consequatur eligendi molestiae quisquam ipsum velit
-          quibusdam id harum sed tempore delectus. Harum reprehenderit
-          laboriosam laudantium. Aliquam amet repellendus eveniet nisi
-          blanditiis numquam distinctio cum accusamus praesentium tempore
-          voluptates eum nulla cumque necessitatibus, id assumenda, sed magni
-          consectetur corrupti ipsam, hic aperiam mollitia perspiciatis iure!
-          Adipisci, nostrum facilis ullam placeat consequatur at nemo commodi
-          quibusdam cumque distinctio maiores blanditiis suscipit vitae ipsa?
-          Neque porro qui repudiandae repellat voluptatem tempora facilis
-          necessitatibus voluptatibus nobis, eaque, nisi vel in sint, ad aut
-          consectetur. Nihil doloremque natus nulla excepturi quasi quos. Iusto
-          delectus modi perferendis, minima odio corrupti, nobis aliquid quam
-          sit, facere tenetur! Velit dolores eligendi,
-          <br />
-          <br />
-          consequuntur, illo ipsa aliquid voluptatum facere id tenetur excepturi
-          est reprehenderit quidem temporibus praesentium ipsam recusandae qui
-          ratione rem impedit, dicta eius distinctio deserunt nulla autem. Rerum
-          corporis iusto incidunt eveniet commodi omnis deleniti sint beatae
-          hic, porro rem dolor voluptas totam perspiciatis excepturi fugiat iure
-          ipsa.
-        </p>
+        <h1>{post?.title}</h1>
+        {post?.desc}
       </div>
       <Menu />
     </div>
