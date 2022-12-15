@@ -1,34 +1,60 @@
 import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import Category from "../components/Category";
+// import Category from "../components/Category";
 import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const Write = () => {
-  const [value, setValue] = useState("");
-  const [title, setTitle] = useState("");
+  const state = useLocation().state;
+
+  const [value, setValue] = useState(state?.title || "");
+  const [title, setTitle] = useState(state?.desc || "");
   const [file, setFile] = useState(null);
-  const [cat, setCat] = useState("");
+  const [cat, setCat] = useState(state?.cat || "");
+
+  const navigate = useNavigate();
 
   const upload = async () => {
     try {
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("file", file);
       const res = await axios.post("/upload", formData);
       return res.data;
-    } catch {}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleClick = async (e) => {
     e.preventDefault();
-    const imgUrl = upload();
+    const imgUrl = await upload();
+
     try {
-    } catch {}
+      state
+        ? await axios.put(`/posts/${state.id}`, {
+            title,
+            desc: value,
+            cat,
+            img: file ? imgUrl : "",
+          })
+        : await axios.post(`/posts/`, {
+            title,
+            desc: value,
+            cat,
+            img: file ? imgUrl : "",
+            date: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+          });
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleCat = (e) => {
-    setCat(e.target.value);
-  };
+  // const handleCat = (e) => {
+  //   setCat(e.target.value);
+  // };
   console.log(cat);
 
   return (
@@ -36,6 +62,7 @@ const Write = () => {
       <div className="content">
         <input
           type="text"
+          value={title}
           placeholder="Title"
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -65,7 +92,7 @@ const Write = () => {
             onChange={(e) => setFile(e.target.files[0])}
           />
           <label className="file" htmlFor="file">
-            Upload
+            Upload image
           </label>
           <div className="buttons">
             <button>Save as a draft</button>
@@ -76,45 +103,28 @@ const Write = () => {
           {/* CATEGORIES */}
           <h1>Category</h1>
 
-          <Category cat={"science"} handleCat={handleCat}>
+          {/* <Category catName={"science"} cat={cat} handleCat={handleCat}>
             Science
           </Category>
-          <Category cat={"technology"} handleCat={handleCat}>
+          <Category catName={"technology"} cat={cat} handleCat={handleCat}>
             Technology
           </Category>
-          <Category cat={"art"} handleCat={handleCat}>
+          <Category catName={"art"} cat={cat} handleCat={handleCat}>
             Art
           </Category>
-          <Category cat={"design"} handleCat={handleCat}>
+          <Category catName={"design"} cat={cat} handleCat={handleCat}>
             Design
           </Category>
-          <Category cat={"food"} handleCat={handleCat}>
+          <Category catName={"food"} cat={cat} handleCat={handleCat}>
             Food
-          </Category>
+          </Category> */}
 
-          {/* <div className="cat">
-            <input
-              type="radio"
-              name="cat"
-              value="science"
-              id="science"
-              onChange={(e) => setCat(e.target.value)}
-            />
-            <label htmlFor="science">Science</label>
-          </div>
+          {/* ------- */}
+
           <div className="cat">
             <input
               type="radio"
-              name="cat"
-              value="technology"
-              id="technology"
-              onChange={(e) => setCat(e.target.value)}
-            />
-            <label htmlFor="technology">Technology</label>
-          </div>
-          <div className="cat">
-            <input
-              type="radio"
+              checked={cat === "art"}
               name="cat"
               value="art"
               id="art"
@@ -125,6 +135,40 @@ const Write = () => {
           <div className="cat">
             <input
               type="radio"
+              checked={cat === "science"}
+              name="cat"
+              value="science"
+              id="science"
+              onChange={(e) => setCat(e.target.value)}
+            />
+            <label htmlFor="science">Science</label>
+          </div>
+          <div className="cat">
+            <input
+              type="radio"
+              checked={cat === "technology"}
+              name="cat"
+              value="technology"
+              id="technology"
+              onChange={(e) => setCat(e.target.value)}
+            />
+            <label htmlFor="technology">Technology</label>
+          </div>
+          <div className="cat">
+            <input
+              type="radio"
+              checked={cat === "cinema"}
+              name="cat"
+              value="cinema"
+              id="cinema"
+              onChange={(e) => setCat(e.target.value)}
+            />
+            <label htmlFor="cinema">Cinema</label>
+          </div>
+          <div className="cat">
+            <input
+              type="radio"
+              checked={cat === "design"}
               name="cat"
               value="design"
               id="design"
@@ -135,13 +179,16 @@ const Write = () => {
           <div className="cat">
             <input
               type="radio"
+              checked={cat === "food"}
               name="cat"
               value="food"
               id="food"
               onChange={(e) => setCat(e.target.value)}
             />
             <label htmlFor="food">Food</label>
-          </div> */}
+          </div>
+
+          {/* ---- */}
         </div>
       </div>
     </div>
