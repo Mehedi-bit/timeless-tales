@@ -7,6 +7,7 @@ import axios from "axios";
 import moment from "moment";
 import { useContext } from "react";
 import { AuthContext } from "../context/authContext.js";
+// import DOMPurify from "dompurify";
 
 const Single = () => {
   const [post, setPost] = useState({});
@@ -39,10 +40,15 @@ const Single = () => {
     }
   };
 
+  const getText = (html) => {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent;
+  };
+
   return (
     <div className="single">
       <div className="content">
-        <img src={post?.img} alt="" />
+        <img src={`../upload/${post?.img}`} alt="" />
         <div className="user">
           {post.userImg && <img src={post.userImg} alt="" />}
           <div className="info">
@@ -59,7 +65,7 @@ const Single = () => {
           )}
         </div>
         <h1>{post?.title}</h1>
-        {post?.desc}
+        <p>{getText(post?.desc)}</p>
       </div>
       <Menu cat={post.cat} />
     </div>
