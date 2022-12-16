@@ -58,16 +58,18 @@ const Home = () => {
   const maxTitleLen = 22;
   const maxDescriptionLen = 570;
 
-  const chooseTitleLength = (description) => {
-    if (description.length > maxTitleLen) {
-      return description.slice(0, maxTitleLen) + "...";
+  const chooseTitleLength = (title) => {
+    if (title.length > maxTitleLen) {
+      return title.slice(0, maxTitleLen) + "...";
     }
+    return title;
   };
 
   const chooseDesLength = (description) => {
     if (description.length > maxDescriptionLen) {
       return description.slice(0, maxDescriptionLen) + "...";
     }
+    return description;
   };
 
   return (
